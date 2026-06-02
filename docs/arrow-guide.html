@@ -191,7 +191,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Apache Arrow, and the <code>arrow</code> package in R, is an extremely fast toolbox for larger-than-memory data analyis.</p>
+<p>Apache Arrow, and the <code>arrow</code> package in R, is an extremely fast toolbox for larger-than-memory data analysis.</p>
 <section id="reading-and-writing-apache-parquet-files" class="level3">
 <h3 class="anchored" data-anchor-id="reading-and-writing-apache-parquet-files">Reading and writing Apache Parquet files</h3>
 <p>Reading data in as parquet will offer a significant speedup.</p>
@@ -230,7 +230,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="schemas---here-be-dragons" class="level3">
 <h3 class="anchored" data-anchor-id="schemas---here-be-dragons">Schemas - here be dragons</h3>
 <p>When you read in a dataset in Arrow, it scans approximately 1 MB of the data for a csv, or the first file when reading parquet files, and guesses (imputes) the data types. If not all of your data is represented in that sample, Arrow may <span class="focus">infer the wrong type</span>!</p>
-<p>Be sure to check your schema using <code>schema(nyc_taxi)</code>. The <code>schema()</code> function can extract a schema from an object, but it can also be used to update a schema if your’s is incorrect.</p>
+<p>Be sure to check your schema using <code>schema(nyc_taxi)</code>. The <code>schema()</code> function can extract a schema from an object, but it can also be used to update a schema if yours is incorrect.</p>
 </section>
 <section id="learn-more" class="level3">
 <h3 class="anchored" data-anchor-id="learn-more">Learn more</h3>

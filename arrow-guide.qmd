@@ -4,7 +4,7 @@ subtitle: "A microlearning module on larger-than-memory data analysis in R with 
 author: "[Pete Lawson, PhD]{.focus} | Data and Visualization Librarian"
 ---
 
-Apache Arrow, and the `arrow` package in R, is an extremely fast toolbox for larger-than-memory data analyis.
+Apache Arrow, and the `arrow` package in R, is an extremely fast toolbox for larger-than-memory data analysis.
 
 ### Reading and writing Apache Parquet files
 
@@ -63,7 +63,7 @@ nyc_taxi |>
 
 When you read in a dataset in Arrow, it scans approximately 1 MB of the data for a csv, or the first file when reading parquet files, and guesses (imputes) the data types. If not all of your data is represented in that sample, Arrow may [infer the wrong type]{.focus}!
 
-Be sure to check your schema using `schema(nyc_taxi)`. The `schema()` function can extract a schema from an object, but it can also be used to update a schema if your's is incorrect.
+Be sure to check your schema using `schema(nyc_taxi)`. The `schema()` function can extract a schema from an object, but it can also be used to update a schema if yours is incorrect.
 
 ### Learn more 
 
