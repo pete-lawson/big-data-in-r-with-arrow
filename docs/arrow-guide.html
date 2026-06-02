@@ -24,6 +24,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -43,7 +78,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a1a92f0964b7974071fd97d0cfb97a02.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-1e41aeb498e8662914e04e5c7d9f9916.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -98,11 +133,11 @@ ul.task-list li input[type="checkbox"] {
   </li>  
   <li class="nav-item">
     <a class="nav-link active" href="./arrow-guide.html" aria-current="page"> 
-<span class="menu-text">Arrow Guide</span></a>
+<span class="menu-text">Guide</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./presentation/big-data-in-r-with-arrow.html"> 
-<span class="menu-text">Big Data in R Presentation</span></a>
+    <a class="nav-link" href="./presentation/big-data-in-r-with-arrow.html" target="_blank"> 
+<span class="menu-text">Presentation</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -120,13 +155,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#overview-of-apache-arrow-and-the-arrow-library" id="toc-overview-of-apache-arrow-and-the-arrow-library" class="nav-link active" data-scroll-target="#overview-of-apache-arrow-and-the-arrow-library">Overview of Apache Arrow and the <code>arrow</code> library</a></li>
-  <li><a href="#in-english-please" id="toc-in-english-please" class="nav-link" data-scroll-target="#in-english-please">In English please!</a></li>
-  <li><a href="#lazy-evaluation" id="toc-lazy-evaluation" class="nav-link" data-scroll-target="#lazy-evaluation">Lazy Evaluation</a></li>
-  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a>
-  <ul class="collapse">
-  <li><a href="#rule-of-thumb" id="toc-rule-of-thumb" class="nav-link" data-scroll-target="#rule-of-thumb">Rule of thumb</a></li>
-  </ul></li>
+  <li><a href="#reading-and-writing-apache-parquet-files" id="toc-reading-and-writing-apache-parquet-files" class="nav-link active" data-scroll-target="#reading-and-writing-apache-parquet-files">Reading and writing Apache Parquet files</a></li>
+  <li><a href="#when-to-pull-data-into-memory" id="toc-when-to-pull-data-into-memory" class="nav-link" data-scroll-target="#when-to-pull-data-into-memory">When to pull data into memory</a></li>
+  <li><a href="#schemas---here-be-dragons" id="toc-schemas---here-be-dragons" class="nav-link" data-scroll-target="#schemas---here-be-dragons">Schemas - here be dragons</a></li>
+  <li><a href="#learn-more" id="toc-learn-more" class="nav-link" data-scroll-target="#learn-more">Learn more</a></li>
   </ul>
 </nav>
     </div>
@@ -136,7 +168,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Big Data in R with Arrow</h1>
-<p class="subtitle lead">A micro-module on larger-than-memory data analysis in R with Apache Arrow</p>
+<p class="subtitle lead">A microlearning module on larger-than-memory data analysis in R with Apache Arrow</p>
 </div>
 
 
@@ -159,43 +191,52 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Apache Arrow is an extremely fast multi-language toolbox for fast data interchange and in-memory analytics.</p>
-<section id="overview-of-apache-arrow-and-the-arrow-library" class="level3">
-<h3 class="anchored" data-anchor-id="overview-of-apache-arrow-and-the-arrow-library">Overview of Apache Arrow and the <code>arrow</code> library</h3>
-<ul>
-<li>Read and write Parquet Files, a common, space-efficient columnar file format.</li>
-<li>Read and write CSV files.</li>
-<li>Read</li>
-</ul>
+<p>Apache Arrow, and the <code>arrow</code> package in R, is an extremely fast toolbox for larger-than-memory data analyis.</p>
+<section id="reading-and-writing-apache-parquet-files" class="level3">
+<h3 class="anchored" data-anchor-id="reading-and-writing-apache-parquet-files">Reading and writing Apache Parquet files</h3>
+<p>Reading data in as parquet will offer a significant speedup.</p>
+<p>If you have data loaded from csv, you can write it into a parquet file.</p>
+<p>To load the data from a single csv, you can use <code>open_csv_dataset("path/to/csv")</code>, which is a wrapper to <code>open_dataset()</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>taxi_data <span class="ot">&lt;-</span> <span class="fu">open_csv_dataset</span>(<span class="st">"data/nyc-taxi/yellow_taxi_data.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>To take full advantage of parquet performance you can partition your file into individual parquet files, but you must be cautious:</p>
+<p>Partition your data into files <span class="focus">between 20 MB and 2 GB</span>, with no more than <span class="focus">10,000 partitions</span>. Too small and reading metadata from each file will slow us down, to big and we won’t see a performance advantage over one file.</p>
+<p>Use “hive-partitioning” when saving to split our data into multiple directories based on key variable(s) of interest In this example we will save the NYC taxi data into parquet, partitioned on the variables <code>year</code> and <code>month</code>.</p>
+<p>Because the variables are saved in the directory names, Arrow will automatically infer the Parquet structure.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>nyc_taxi <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_dataset</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nyc-taxi/"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">format =</span> <span class="st">"parquet"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">partitioning =</span> <span class="fu">c</span>(<span class="st">"year"</span>, <span class="st">"month"</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">hive_style =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We partitioned our single csv into <span class="focus">196</span> parquet files, around <span class="focus">200 MB</span> each, so we should see great performance!</p>
 </section>
-<section id="in-english-please" class="level3">
-<h3 class="anchored" data-anchor-id="in-english-please">In English please!</h3>
-<p>Columnar format is a fast way to store data in memory if you are planning on performing data analysis.</p>
-<p>Arrow keeps data in a single format that can be accessed by multiple programming languages without converting it into a format that works natively in a given programming language.</p>
-<p>Rather than using a tibble or a data.frame, data is stored in a file, <code>Arrow</code> ## Schemas “here be dragons”</p>
-<p><code>arrow::schema()</code>: Create a schema or extract one from an object.</p>
-<ul class="task-list">
-<li><label><input type="checkbox">When you read in a dataset in Arrow, it scans approximately 1MB of the data for a csv, or the first file when reading parquet files, and guesses the data types based.</label></li>
-</ul>
-</section>
-<section id="lazy-evaluation" class="level2">
-<h2 class="anchored" data-anchor-id="lazy-evaluation">Lazy Evaluation</h2>
-<p>While our <code>dplyr</code> verbs will feel familiar in Arrow, there is a subtle difference in how the code is evaluated. Normally, in <code>dplyr</code>, everything is run and a data frame (or tibble, depending on your input) is returned.</p>
-<p>When you know that the result of your dplyr query will be larger than your available memory, that could be dangerous. That’s why Arrow uses <code>lazy evaluation</code>. Your <code>dplyr</code> verbs aren’t executed until you explicitly tell Arrow to do so.</p>
+<section id="when-to-pull-data-into-memory" class="level3">
+<h3 class="anchored" data-anchor-id="when-to-pull-data-into-memory">When to pull data into memory</h3>
+<p>Arrow uses <code>lazy evaluation</code>. Your <code>dplyr</code> verbs aren’t executed until you explicitly tell Arrow to do so.</p>
 <p>You can tell it two ways:</p>
-<p><code>compute()</code>: bring the results of the Arrow query into memory as an Arrow Table <code>collect()</code>: bring the results of the Arrow query into memory as a <code>tibble</code></p>
+<p><code>collect()</code>: Arrow query into memory as a <code>tibble</code> (thousands of rows) <code>compute()</code>: Arrow query into memory as an Arrow Table (millions of rows)</p>
+<p>Use <code>nrow()</code> liberally. This will tell you how many rows will be returned <span class="focus">if</span> you choose to bring the data into memory. Too many (more than a few million rows) and you likely need to filter the data down some more.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nyc_taxi <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="dv">2020</span><span class="sc">:</span><span class="dv">2026</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
-<section id="section" class="level2">
-<h2 class="anchored" data-anchor-id="section"></h2>
-<p><strong>Larger than Memory</strong>: Dataset: When the data won’t fit into memory.</p>
-<p><strong>Smaller than Memory</strong> Millions of rows: Arrow Thousands of rows (or less): Tibble</p>
-<section id="rule-of-thumb" class="level3">
-<h3 class="anchored" data-anchor-id="rule-of-thumb">Rule of thumb</h3>
-<p>If you know the data is larger than your memory, start with a Dataset.</p>
-<p>Use <code>nrow()</code> liberally to understand how many rows would be returned by a query. If in the millions, stick with <code>Arrow</code>. If thousands or less, go with <code>tibble</code>.</p>
+<section id="schemas---here-be-dragons" class="level3">
+<h3 class="anchored" data-anchor-id="schemas---here-be-dragons">Schemas - here be dragons</h3>
+<p>When you read in a dataset in Arrow, it scans approximately 1 MB of the data for a csv, or the first file when reading parquet files, and guesses (imputes) the data types. If not all of your data is represented in that sample, Arrow may <span class="focus">infer the wrong type</span>!</p>
+<p>Be sure to check your schema using <code>schema(nyc_taxi)</code>. The <code>schema()</code> function can extract a schema from an object, but it can also be used to update a schema if your’s is incorrect.</p>
+</section>
+<section id="learn-more" class="level3">
+<h3 class="anchored" data-anchor-id="learn-more">Learn more</h3>
+<p>View the <code>arrow</code> package <a href="https://arrow.apache.org/docs/18.0/r/index.html">documentation</a>, or work through this <a href="https://posit-conf-2024.github.io/arrow/">excellent tutorial</a> from posit::conf(2025).</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

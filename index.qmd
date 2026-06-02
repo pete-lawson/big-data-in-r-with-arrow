@@ -5,13 +5,23 @@ author: "[Pete Lawson, PhD]{.focus} | Data and Visualization Librarian"
 footer: "Redivis Interview 2026" 
 ---
 
-This short presentation and accompanying reference guide introduces one approach to working with larger-than-memory data analysis in R using the Apache Arrow package `arrow`.
+This short [presentation](presentation/big-data-in-r-with-arrow.qmd) and accompanying [reference guide](arrow-guide.qmd) introduces one approach to working with larger-than-memory data analysis in R using the Apache Arrow package `arrow`.
 
 ::: {.callout-note icon=false}
 
 ## Learning Objectives
 
 - Be able to **explain** why data analysis is faster on data organized in columns over rows. 
-
+- **Describe** when an Arrow Dataset is necessary over a tibble or data frame.
+- Be able to **recall** how data is brought into memory from an Arrow Dataset.  
 :::
+
+## Acknowledgements
+
+The material from the Big Data in R with Arrow microlearning module was developed, in part, from other open materials. I would like to acknowledge:
+
+[R for Data Science (2e)](https://r4ds.hadley.nz/arrow.html) written by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund
+
+[Big Data in R with Arrow 1-Day](https://posit-conf-2024.github.io/arrow/) Posit::Conf (2024) Workshop by Steph Hazlitt & Nic Crane
+
 

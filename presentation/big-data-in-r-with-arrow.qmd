@@ -129,8 +129,8 @@ NYC Taxi and Limousine Commission (TLC) Trip Record Data
 ::: incremental
 -   Yellow Taxi: TLC Trip Record Data from 2010 - April 2026
 -   Common demonstration dataset for working with big data
--   90 GB csv
--   1,670,942,457 rows (that's alot of :taxi: rides!)
+-   [90 GB]{.focus} csv
+-   [1,670,942,457]{.focus} rows (that's alot of :taxi: rides!)
 :::
 ::::
 
@@ -225,7 +225,6 @@ nyc_taxi |>
 
 ```{r}
 #| code-line-numbers: "5|1-5"
-#| eval: FALSE
 nyc_taxi |>                                                        
   group_by(year) |> 
   summarize(total_rides = n()) |> 
@@ -251,7 +250,6 @@ nyc_taxi |>
 
 ```{r}
 #| code-line-numbers: "5|1-5"
-#| eval: FALSE
 nyc_taxi |>                                                        
   group_by(year) |> 
   summarize(total_rides = n()) |> 
@@ -265,7 +263,6 @@ nyc_taxi |>
 ## `dplyr` query 
 
 ```{r}
-#| eval: FALSE
 tic()
 shared_rides <- nyc_taxi |> 
   group_by(year) |> 

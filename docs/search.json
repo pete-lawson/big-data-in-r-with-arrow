@@ -130,7 +130,7 @@
     "href": "index.html",
     "title": "Big Data in R with Arrow",
     "section": "",
-    "text": "This short presentation and accompanying reference guide introduces one approach to working with larger-than-memory data analysis in R using the Apache Arrow package arrow.\n\n\n\n\n\n\nNoteLearning Objectives\n\n\n\n\nBe able to explain why data analysis is faster on data organized in columns over rows."
+    "text": "This short presentation and accompanying reference guide introduces one approach to working with larger-than-memory data analysis in R using the Apache Arrow package arrow."
   },
   {
     "objectID": "index.html#learning-objectives",
@@ -144,7 +144,7 @@
     "href": "arrow-guide.html",
     "title": "Big Data in R with Arrow",
     "section": "",
-    "text": "Apache Arrow is an extremely fast multi-language toolbox for fast data interchange and in-memory analytics."
+    "text": "Apache Arrow, and the arrow package in R, is an extremely fast toolbox for larger-than-memory data analyis.\n\nReading and writing Apache Parquet files\nReading data in as parquet will offer a significant speedup.\nIf you have data loaded from csv, you can write it into a parquet file.\nTo load the data from a single csv, you can use open_csv_dataset(\"path/to/csv\"), which is a wrapper to open_dataset().\n\ntaxi_data &lt;- open_csv_dataset(\"data/nyc-taxi/yellow_taxi_data.csv\")\n\nTo take full advantage of parquet performance you can partition your file into individual parquet files, but you must be cautious:\nPartition your data into files between 20 MB and 2 GB, with no more than 10,000 partitions. Too small and reading metadata from each file will slow us down, to big and we won’t see a performance advantage over one file.\nUse “hive-partitioning” when saving to split our data into multiple directories based on key variable(s) of interest In this example we will save the NYC taxi data into parquet, partitioned on the variables year and month.\nBecause the variables are saved in the directory names, Arrow will automatically infer the Parquet structure.\n\nnyc_taxi |&gt;\n  write_dataset(\n    \"nyc-taxi/\",\n    format = \"parquet\",\n    partitioning = c(\"year\", \"month\"),\n    hive_style = TRUE\n  )\n\nWe partitioned our single csv into 196 parquet files, around 200 MB each, so we should see great performance!\n\n\nWhen to pull data into memory\nArrow uses lazy evaluation. Your dplyr verbs aren’t executed until you explicitly tell Arrow to do so.\nYou can tell it two ways:\ncollect(): Arrow query into memory as a tibble (thousands of rows) compute(): Arrow query into memory as an Arrow Table (millions of rows)\nUse nrow() liberally. This will tell you how many rows will be returned if you choose to bring the data into memory. Too many (more than a few million rows) and you likely need to filter the data down some more.\n\nnyc_taxi |&gt;\n  filter(year %in% 2020:2026) |&gt;\n  nrow()\n\n\n\nSchemas - here be dragons\nWhen you read in a dataset in Arrow, it scans approximately 1 MB of the data for a csv, or the first file when reading parquet files, and guesses (imputes) the data types. If not all of your data is represented in that sample, Arrow may infer the wrong type!\nBe sure to check your schema using schema(nyc_taxi). The schema() function can extract a schema from an object, but it can also be used to update a schema if your’s is incorrect.\n\n\nLearn more\nView the arrow package documentation, or work through this excellent tutorial from posit::conf(2025)."
   },
   {
     "objectID": "arrow-guide.html#lazy-evaluation",
@@ -172,14 +172,14 @@
     "href": "presentation/big-data-in-r-with-arrow.html#load-nyc-taxi-data",
     "title": "Big Data in R with Arrow",
     "section": "Load NYC Taxi Data",
-    "text": "Load NYC Taxi Data\n\nlibrary(arrow)\nlibrary(tictoc)\ntic()\n\nnyc_taxi &lt;- open_dataset(\n  \"../data/nyc-taxi-csv/nyc_yellow_taxi.csv\",\n  format = \"csv\"\n)\n\ntoc()\n\n0.013 sec elapsed"
+    "text": "Load NYC Taxi Data\n\nlibrary(arrow)\nlibrary(tictoc)\ntic()\n\nnyc_taxi &lt;- open_dataset(\n  \"../data/nyc-taxi-csv/nyc_yellow_taxi.csv\",\n  format = \"csv\"\n)\n\ntoc()\n\n0.015 sec elapsed"
   },
   {
     "objectID": "presentation/big-data-in-r-with-arrow.html#dplyr-query",
     "href": "presentation/big-data-in-r-with-arrow.html#dplyr-query",
     "title": "Big Data in R with Arrow",
     "section": "dplyr query",
-    "text": "dplyr query\n\ntic()\nshared_rides &lt;- nyc_taxi |&gt; \n  group_by(year) |&gt; \n  summarize(total_rides = n(), \n            shared_rides = sum(passenger_count &gt; 1,\n                               na.rm = TRUE)) |&gt; \n  mutate(percent_shared = (shared_rides / total_rides) * 100) |&gt; \n  collect()\ntoc()"
+    "text": "dplyr query\n\ntic()\nshared_rides &lt;- nyc_taxi |&gt; \n  group_by(year) |&gt; \n  summarize(total_rides = n(), \n            shared_rides = sum(passenger_count &gt; 1,\n                               na.rm = TRUE)) |&gt; \n  mutate(percent_shared = (shared_rides / total_rides) * 100) |&gt; \n  collect()\ntoc()\n\n129.196 sec elapsed"
   },
   {
     "objectID": "presentation/big-data-in-r-with-arrow.html#some-big-data",
@@ -256,7 +256,7 @@
     "href": "presentation/big-data-in-r-with-arrow.html#dplyr-query---a-little-faster-now",
     "title": "Big Data in R with Arrow",
     "section": "dplyr query - a little faster now",
-    "text": "dplyr query - a little faster now\n\nlibrary(tictoc)\ntic()\nshared_rides &lt;- nyc_taxi |&gt; \n  group_by(year) |&gt; \n  summarize(total_rides = n(), \n            shared_rides = sum(passenger_count &gt; 1,\n                               na.rm = TRUE)) |&gt; \n  mutate(percent_shared = (shared_rides / total_rides) * 100) |&gt; \n  collect()\ntoc()\n\n2.496 sec elapsed\n\n\n\nRemember, this is over one billion rows of data\n\n\nOriginally 90 GB in size (now 30 GB), running on a laptop with only 24 GB of memory"
+    "text": "dplyr query - a little faster now\n\nlibrary(tictoc)\ntic()\nshared_rides &lt;- nyc_taxi |&gt; \n  group_by(year) |&gt; \n  summarize(total_rides = n(), \n            shared_rides = sum(passenger_count &gt; 1,\n                               na.rm = TRUE)) |&gt; \n  mutate(percent_shared = (shared_rides / total_rides) * 100) |&gt; \n  collect()\ntoc()\n\n2.288 sec elapsed\n\n\n\nRemember, this is over one billion rows of data\n\n\nOriginally 90 GB in size (now 30 GB), running on a laptop with only 24 GB of memory"
   },
   {
     "objectID": "presentation/big-data-in-r-with-arrow.html#arrow-dplyr-query",
@@ -277,14 +277,14 @@
     "href": "presentation/big-data-in-r-with-arrow.html#bring-results-into-memory",
     "title": "Big Data in R with Arrow",
     "section": "Bring results into memory",
-    "text": "Bring results into memory\n\n\ncollect() will bring the results of the Arrow query into memory as a tibble.\n\n\nnyc_taxi |&gt;                                                        \n  group_by(year) |&gt; \n  summarize(total_rides = n()) |&gt; \n  arrange(desc(year)) |&gt; \n  collect()"
+    "text": "Bring results into memory\n\n\ncollect() will bring the results of the Arrow query into memory as a tibble.\n\n\nnyc_taxi |&gt;                                                        \n  group_by(year) |&gt; \n  summarize(total_rides = n()) |&gt; \n  arrange(desc(year)) |&gt; \n  collect()\n\n# A tibble: 17 × 2\n    year total_rides\n   &lt;int&gt;       &lt;int&gt;\n 1  2026    14877870\n 2  2025    48722602\n 3  2024    41169720\n 4  2023    38310226\n 5  2022    39656098\n 6  2021    30904308\n 7  2020    24649092\n 8  2019    84598444\n 9  2018   102871387\n10  2017   113500327\n11  2016   131131805\n12  2015   146039231\n13  2014   165447579\n14  2013   171816340\n15  2012   171359007\n16  2011   176887259\n17  2010   169001162"
   },
   {
     "objectID": "presentation/big-data-in-r-with-arrow.html#bring-results-into-memory-1",
     "href": "presentation/big-data-in-r-with-arrow.html#bring-results-into-memory-1",
     "title": "Big Data in R with Arrow",
     "section": "Bring results into memory",
-    "text": "Bring results into memory\n\n\ncompute() will bring the results of the Arrow query into memory as an Arrow Table.\n\n\nnyc_taxi |&gt;                                                        \n  group_by(year) |&gt; \n  summarize(total_rides = n()) |&gt; \n  arrange(desc(year)) |&gt; \n  compute()"
+    "text": "Bring results into memory\n\n\ncompute() will bring the results of the Arrow query into memory as an Arrow Table.\n\n\nnyc_taxi |&gt;                                                        \n  group_by(year) |&gt; \n  summarize(total_rides = n()) |&gt; \n  arrange(desc(year)) |&gt; \n  compute()\n\nTable\n17 rows x 2 columns\n$year &lt;int64&gt;\n$total_rides &lt;int64&gt;"
   },
   {
     "objectID": "presentation/big-data-in-r-with-arrow.html#dplyr-query---a-little-faster-now-1",
@@ -341,5 +341,54 @@
     "title": "Big Data in R with Arrow",
     "section": "",
     "text": "Larger than Memory: Dataset: When the data won’t fit into memory.\nSmaller than Memory Millions of rows: Arrow Thousands of rows (or less): Tibble\n\nRule of thumb\nIf you know the data is larger than your memory, start with a Dataset.\nUse nrow() liberally to understand how many rows would be returned by a query. If in the millions, stick with Arrow. If thousands or less, go with tibble."
+  },
+  {
+    "objectID": "arrow-guide.html#tibbles-and-tables-and-datasets---oh-my",
+    "href": "arrow-guide.html#tibbles-and-tables-and-datasets---oh-my",
+    "title": "Big Data in R with Arrow",
+    "section": "Tibbles and Tables and Datasets - oh my!",
+    "text": "Tibbles and Tables and Datasets - oh my!\n:::: Columnar format is a fast way to store data in memory if you are planning on performing data analysis.\nArrow keeps data in a single format that can be accessed by multiple programming languages without converting it into a format that works natively in a given programming language.\nRather than using a tibble or a data.frame, data is stored in a file, Arrow ## Schemas “here be dragons”\narrow::schema(): Create a schema or extract one from an object.\n\nWhen you read in a dataset in Arrow, it scans approximately 1MB of the data for a csv, or the first file when reading parquet files, and guesses the data types based."
+  },
+  {
+    "objectID": "arrow-guide.html#handy-rules-of-thumb",
+    "href": "arrow-guide.html#handy-rules-of-thumb",
+    "title": "Big Data in R with Arrow",
+    "section": "Handy rules of thumb",
+    "text": "Handy rules of thumb\nLarger than Memory: Dataset: When the data won’t fit into memory.\nSmaller than Memory Millions of rows: Arrow Thousands of rows (or less): Tibble\n\nRule of thumb\nIf you know the data is larger than your memory, start with a Dataset.\nUse nrow() liberally to understand how many rows would be returned by a query. If in the millions, stick with Arrow. If thousands or less, go with tibble."
+  },
+  {
+    "objectID": "arrow-guide.html#loading-data",
+    "href": "arrow-guide.html#loading-data",
+    "title": "Big Data in R with Arrow",
+    "section": "Loading Data",
+    "text": "Loading Data\n  \"../data/nyc-taxi-parquet\",\n  format = \"parquet\"\nColumnar format is a fast way to store data in memory if you are planning on performing data analysis.\nArrow keeps data in a single format that can be accessed by multiple programming languages without converting it into a format that works natively in a given programming language.\nRather than using a tibble or a data.frame, data is stored in a file, Arrow ## Schemas “here be dragons”\narrow::schema(): Create a schema or extract one from an object.\n\nWhen you read in a dataset in Arrow, it scans approximately 1MB of the data for a csv, or the first file when reading parquet files, and guesses the data types based."
+  },
+  {
+    "objectID": "arrow-guide.html#schemas",
+    "href": "arrow-guide.html#schemas",
+    "title": "Big Data in R with Arrow",
+    "section": "Schemas",
+    "text": "Schemas\narrow::schema(): Create a schema or extract one from an object.\nWhen you read in a dataset in Arrow, it scans approximately 1MB of the data for a csv, or the first file when reading parquet files, and guesses the data types based."
+  },
+  {
+    "objectID": "arrow-guide.html#schemas---here-be-dragons",
+    "href": "arrow-guide.html#schemas---here-be-dragons",
+    "title": "Big Data in R with Arrow",
+    "section": "Schemas - here be dragons",
+    "text": "Schemas - here be dragons\narrow::schema(): Create a schema or extract one from an object.\nWhen you read in a dataset in Arrow, it scans approximately 1MB of the data for a csv, or the first file when reading parquet files, and guesses (imputes) the data types."
+  },
+  {
+    "objectID": "arrow-guide.html#learn-more",
+    "href": "arrow-guide.html#learn-more",
+    "title": "Big Data in R with Arrow",
+    "section": "Learn more",
+    "text": "Learn more\nView the arrow package documentation, or work through this excellent tutorial from posit::conf(2025)."
+  },
+  {
+    "objectID": "index.html#acknowledgements",
+    "href": "index.html#acknowledgements",
+    "title": "Big Data in R with Arrow",
+    "section": "Acknowledgements",
+    "text": "Acknowledgements\nThe material from the Big Data in R with Arrow microlearning module was developed, in part, from other open materials. I would like to acknowledge:\nR for Data Science (2e) written by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund\nBig Data in R with Arrow 1-Day Posit::Conf (2024) Workshop by Steph Hazlitt & Nic Crane"
   }
 ]

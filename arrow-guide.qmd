@@ -1,56 +1,72 @@
 ---
 title: "Big Data in R with Arrow"
-subtitle: "A micro-module on larger-than-memory data analysis in R with Apache Arrow"
+subtitle: "A microlearning module on larger-than-memory data analysis in R with Apache Arrow"
 author: "[Pete Lawson, PhD]{.focus} | Data and Visualization Librarian"
 ---
 
+Apache Arrow, and the `arrow` package in R, is an extremely fast toolbox for larger-than-memory data analyis.
 
-Apache Arrow is an extremely fast multi-language toolbox for fast data interchange and in-memory analytics.
+### Reading and writing Apache Parquet files
 
+Reading data in as parquet will offer a significant speedup. 
 
-### Overview of Apache Arrow and the `arrow` library
-- Read and write Parquet Files, a common, space-efficient columnar file format.
-- Read and write CSV files. 
-- Read
+If you have data loaded from csv, you can write it into a parquet file.
 
-### In English please! 
+To load the data from a single csv, you can use `open_csv_dataset("path/to/csv")`, which is a wrapper to `open_dataset()`.
 
+```{r}
+#| eval: FALSE
+taxi_data <- open_csv_dataset("data/nyc-taxi/yellow_taxi_data.csv")
+```
 
-Columnar format is a fast way to store data in memory if you are planning on performing data analysis. 
+To take full advantage of parquet performance you can partition your file into individual parquet files, but you must be cautious:
 
-Arrow keeps data in a single format that can be accessed by multiple programming languages without converting it into a format that works natively in a given programming language. 
+Partition your data into files [between 20 MB and 2 GB]{.focus}, with no more than [10,000 partitions]{.focus}. Too small and reading metadata from each file will slow us down, to big and we won't see a performance advantage over one file.
 
-Rather than using a tibble or a data.frame, data is stored in a file, `Arrow`
-## Schemas
-"here be dragons"
+Use "hive-partitioning" when saving to split our data into multiple directories based on key variable(s) of interest In this example we will save the NYC taxi data into parquet, partitioned on the variables `year` and `month`. 
 
-`arrow::schema()`: Create a schema or extract one from an object.
+Because the variables are saved in the directory names, Arrow will automatically infer the Parquet structure.
 
-- [ ] When you read in a dataset in Arrow, it scans approximately 1MB of the data for a csv, or the first file when reading parquet files, and guesses the data types based. 
+```{r}
+#| eval: FALSE
+nyc_taxi |>
+  write_dataset(
+    "nyc-taxi/",
+    format = "parquet",
+    partitioning = c("year", "month"),
+    hive_style = TRUE
+  )
+```
 
-## Lazy Evaluation
+We partitioned our single csv into [196]{.focus} parquet files, around [200 MB]{.focus} each, so we should see great performance!
 
-While our `dplyr` verbs will feel familiar in Arrow, there is a subtle difference in how the code is evaluated. Normally, in `dplyr`, everything is run and a data frame (or tibble, depending on your input) is returned. 
+### When to pull data into memory
 
-When you know that the result of your dplyr query will be larger than your available memory, that could be dangerous. That's why Arrow uses `lazy evaluation`. Your `dplyr` verbs aren't executed until you explicitly tell Arrow to do so. 
+Arrow uses `lazy evaluation`. Your `dplyr` verbs aren't executed until you explicitly tell Arrow to do so. 
 
 You can tell it two ways: 
 
-`compute()`: bring the results of the Arrow query into memory as an Arrow Table
-`collect()`: bring the results of the Arrow query into memory as a `tibble`
+`collect()`: Arrow query into memory as a `tibble` (thousands of rows)
+`compute()`: Arrow query into memory as an Arrow Table (millions of rows)
 
-## 
-**Larger than Memory**: 
-Dataset: When the data won't fit into memory. 
+Use `nrow()` liberally. This will tell you how many rows will be returned [if]{.focus} you choose to bring the data into memory. Too many (more than a few million rows) and you likely need to filter the data down some more.
 
-**Smaller than Memory**
-Millions of rows: Arrow
-Thousands of rows (or less): Tibble
+```{r}
+#| eval: FALSE
+nyc_taxi |>
+  filter(year %in% 2020:2026) |>
+  nrow()
+```
 
-### Rule of thumb
 
-If you know the data is larger than your memory, start with a Dataset.
+### Schemas - here be dragons
 
-Use `nrow()` liberally to understand how many rows would be returned by a query.
-If in the millions, stick with `Arrow`. If thousands or less, go with `tibble`.
+When you read in a dataset in Arrow, it scans approximately 1 MB of the data for a csv, or the first file when reading parquet files, and guesses (imputes) the data types. If not all of your data is represented in that sample, Arrow may [infer the wrong type]{.focus}!
+
+Be sure to check your schema using `schema(nyc_taxi)`. The `schema()` function can extract a schema from an object, but it can also be used to update a schema if your's is incorrect.
+
+### Learn more 
+
+View the `arrow` package [documentation](https://arrow.apache.org/docs/18.0/r/index.html), or work through this [excellent tutorial](https://posit-conf-2024.github.io/arrow/) from posit::conf(2025).
+
 

@@ -43,7 +43,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a1a92f0964b7974071fd97d0cfb97a02.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-1e41aeb498e8662914e04e5c7d9f9916.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -98,11 +98,11 @@ ul.task-list li input[type="checkbox"] {
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./arrow-guide.html"> 
-<span class="menu-text">Arrow Guide</span></a>
+<span class="menu-text">Guide</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./presentation/big-data-in-r-with-arrow.html"> 
-<span class="menu-text">Big Data in R Presentation</span></a>
+    <a class="nav-link" href="./presentation/big-data-in-r-with-arrow.html" target="_blank"> 
+<span class="menu-text">Presentation</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -115,8 +115,14 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#acknowledgements" id="toc-acknowledgements" class="nav-link active" data-scroll-target="#acknowledgements">Acknowledgements</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -147,7 +153,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This short presentation and accompanying reference guide introduces one approach to working with larger-than-memory data analysis in R using the Apache Arrow package <code>arrow</code>.</p>
+<p>This short <a href="./presentation/big-data-in-r-with-arrow.html">presentation</a> and accompanying <a href="./arrow-guide.html">reference guide</a> introduces one approach to working with larger-than-memory data analysis in R using the Apache Arrow package <code>arrow</code>.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -160,11 +166,20 @@ ul.task-list li input[type="checkbox"] {
 <div class="callout-body-container callout-body">
 <ul>
 <li>Be able to <strong>explain</strong> why data analysis is faster on data organized in columns over rows.</li>
+<li><strong>Describe</strong> when an Arrow Dataset is necessary over a tibble or data frame.</li>
+<li>Be able to <strong>recall</strong> how data is brought into memory from an Arrow Dataset.<br>
+</li>
 </ul>
 </div>
 </div>
+<section id="acknowledgements" class="level2">
+<h2 class="anchored" data-anchor-id="acknowledgements">Acknowledgements</h2>
+<p>The material from the Big Data in R with Arrow microlearning module was developed, in part, from other open materials. I would like to acknowledge:</p>
+<p><a href="https://r4ds.hadley.nz/arrow.html">R for Data Science (2e)</a> written by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund</p>
+<p><a href="https://posit-conf-2024.github.io/arrow/">Big Data in R with Arrow 1-Day</a> Posit::Conf (2024) Workshop by Steph Hazlitt &amp; Nic Crane</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

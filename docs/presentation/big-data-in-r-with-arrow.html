@@ -294,8 +294,8 @@
 <ul>
 <li class="fragment">Yellow Taxi: TLC Trip Record Data from 2010 - April 2026</li>
 <li class="fragment">Common demonstration dataset for working with big data</li>
-<li class="fragment">90 GB csv</li>
-<li class="fragment">1,670,942,457 rows (that’s alot of <span class="emoji" data-emoji="taxi">🚕</span> rides!)</li>
+<li class="fragment"><span class="focus">90 GB</span> csv</li>
+<li class="fragment"><span class="focus">1,670,942,457</span> rows (that’s alot of <span class="emoji" data-emoji="taxi">🚕</span> rides!)</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <p><img data-src="images/nyc-taxi-homepage.png"></p>
@@ -318,7 +318,7 @@
 <span id="cb1-9"><a></a></span>
 <span id="cb1-10"><a></a><span class="fu">toc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0.013 sec elapsed</code></pre>
+<pre><code>0.015 sec elapsed</code></pre>
 </div>
 </div>
 </section>
@@ -413,6 +413,28 @@ month: int64</code></pre>
 <span id="cb8-3"><a></a>  <span class="fu">summarize</span>(<span class="at">total_rides =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
 <span id="cb8-4"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(year)) <span class="sc">|&gt;</span> </span>
 <span id="cb8-5"><a></a>  <span class="fu">collect</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 17 × 2
+    year total_rides
+   &lt;int&gt;       &lt;int&gt;
+ 1  2026    14877870
+ 2  2025    48722602
+ 3  2024    41169720
+ 4  2023    38310226
+ 5  2022    39656098
+ 6  2021    30904308
+ 7  2020    24649092
+ 8  2019    84598444
+ 9  2018   102871387
+10  2017   113500327
+11  2016   131131805
+12  2015   146039231
+13  2014   165447579
+14  2013   171816340
+15  2012   171359007
+16  2011   176887259
+17  2010   169001162</code></pre>
+</div>
 </div>
 </div></div>
 </section>
@@ -423,26 +445,35 @@ month: int64</code></pre>
 <p><code>compute()</code> will bring the results of the Arrow query into memory as an <code>Arrow Table</code>.</p>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" data-code-line-numbers="5|1-5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>nyc_taxi <span class="sc">|&gt;</span>                                                        </span>
-<span id="cb9-2"><a></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span> </span>
-<span id="cb9-3"><a></a>  <span class="fu">summarize</span>(<span class="at">total_rides =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb9-4"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(year)) <span class="sc">|&gt;</span> </span>
-<span id="cb9-5"><a></a>  <span class="fu">compute</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" data-code-line-numbers="5|1-5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>nyc_taxi <span class="sc">|&gt;</span>                                                        </span>
+<span id="cb10-2"><a></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a></a>  <span class="fu">summarize</span>(<span class="at">total_rides =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb10-4"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(year)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-5"><a></a>  <span class="fu">compute</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Table
+17 rows x 2 columns
+$year &lt;int64&gt;
+$total_rides &lt;int64&gt;</code></pre>
+</div>
 </div>
 </div></div>
 </section>
 <section id="dplyr-query" class="slide level2 center">
 <h2><code>dplyr</code> query</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">tic</span>()</span>
-<span id="cb10-2"><a></a>shared_rides <span class="ot">&lt;-</span> nyc_taxi <span class="sc">|&gt;</span> </span>
-<span id="cb10-3"><a></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span> </span>
-<span id="cb10-4"><a></a>  <span class="fu">summarize</span>(<span class="at">total_rides =</span> <span class="fu">n</span>(), </span>
-<span id="cb10-5"><a></a>            <span class="at">shared_rides =</span> <span class="fu">sum</span>(passenger_count <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
-<span id="cb10-6"><a></a>                               <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb10-7"><a></a>  <span class="fu">mutate</span>(<span class="at">percent_shared =</span> (shared_rides <span class="sc">/</span> total_rides) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-8"><a></a>  <span class="fu">collect</span>()</span>
-<span id="cb10-9"><a></a><span class="fu">toc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">tic</span>()</span>
+<span id="cb12-2"><a></a>shared_rides <span class="ot">&lt;-</span> nyc_taxi <span class="sc">|&gt;</span> </span>
+<span id="cb12-3"><a></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span> </span>
+<span id="cb12-4"><a></a>  <span class="fu">summarize</span>(<span class="at">total_rides =</span> <span class="fu">n</span>(), </span>
+<span id="cb12-5"><a></a>            <span class="at">shared_rides =</span> <span class="fu">sum</span>(passenger_count <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
+<span id="cb12-6"><a></a>                               <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb12-7"><a></a>  <span class="fu">mutate</span>(<span class="at">percent_shared =</span> (shared_rides <span class="sc">/</span> total_rides) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb12-8"><a></a>  <span class="fu">collect</span>()</span>
+<span id="cb12-9"><a></a><span class="fu">toc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>129.196 sec elapsed</code></pre>
+</div>
 </div>
 </section>
 <section id="speed-things-up-with-parquet" class="slide level2 center">
@@ -473,12 +504,12 @@ month: int64</code></pre>
 <section id="load-parquet-data" class="slide level2 center">
 <h2>Load Parquet data</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>nyc_taxi <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(</span>
-<span id="cb11-2"><a></a>  <span class="st">"../data/nyc-taxi-parquet"</span>,</span>
-<span id="cb11-3"><a></a>  <span class="at">format =</span> <span class="st">"parquet"</span></span>
-<span id="cb11-4"><a></a>)</span>
-<span id="cb11-5"><a></a></span>
-<span id="cb11-6"><a></a>nyc_taxi</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>nyc_taxi <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(</span>
+<span id="cb14-2"><a></a>  <span class="st">"../data/nyc-taxi-parquet"</span>,</span>
+<span id="cb14-3"><a></a>  <span class="at">format =</span> <span class="st">"parquet"</span></span>
+<span id="cb14-4"><a></a>)</span>
+<span id="cb14-5"><a></a></span>
+<span id="cb14-6"><a></a>nyc_taxi</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>FileSystemDataset with 196 Parquet files
 20 columns
@@ -508,18 +539,18 @@ month: int32</code></pre>
 <section id="dplyr-query---a-little-faster-now" class="slide level2 center">
 <h2><code>dplyr</code> query - a little faster now</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">library</span>(tictoc)</span>
-<span id="cb13-2"><a></a><span class="fu">tic</span>()</span>
-<span id="cb13-3"><a></a>shared_rides <span class="ot">&lt;-</span> nyc_taxi <span class="sc">|&gt;</span> </span>
-<span id="cb13-4"><a></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span> </span>
-<span id="cb13-5"><a></a>  <span class="fu">summarize</span>(<span class="at">total_rides =</span> <span class="fu">n</span>(), </span>
-<span id="cb13-6"><a></a>            <span class="at">shared_rides =</span> <span class="fu">sum</span>(passenger_count <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
-<span id="cb13-7"><a></a>                               <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb13-8"><a></a>  <span class="fu">mutate</span>(<span class="at">percent_shared =</span> (shared_rides <span class="sc">/</span> total_rides) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb13-9"><a></a>  <span class="fu">collect</span>()</span>
-<span id="cb13-10"><a></a><span class="fu">toc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">library</span>(tictoc)</span>
+<span id="cb16-2"><a></a><span class="fu">tic</span>()</span>
+<span id="cb16-3"><a></a>shared_rides <span class="ot">&lt;-</span> nyc_taxi <span class="sc">|&gt;</span> </span>
+<span id="cb16-4"><a></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span> </span>
+<span id="cb16-5"><a></a>  <span class="fu">summarize</span>(<span class="at">total_rides =</span> <span class="fu">n</span>(), </span>
+<span id="cb16-6"><a></a>            <span class="at">shared_rides =</span> <span class="fu">sum</span>(passenger_count <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
+<span id="cb16-7"><a></a>                               <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb16-8"><a></a>  <span class="fu">mutate</span>(<span class="at">percent_shared =</span> (shared_rides <span class="sc">/</span> total_rides) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-9"><a></a>  <span class="fu">collect</span>()</span>
+<span id="cb16-10"><a></a><span class="fu">toc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>2.496 sec elapsed</code></pre>
+<pre><code>2.288 sec elapsed</code></pre>
 </div>
 </div>
 <div class="fragment">
