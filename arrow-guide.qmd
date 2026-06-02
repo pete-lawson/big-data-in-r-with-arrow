@@ -1,0 +1,56 @@
+---
+title: "Big Data in R with Arrow"
+subtitle: "A micro-module on larger-than-memory data analysis in R with Apache Arrow"
+author: "[Pete Lawson, PhD]{.focus} | Data and Visualization Librarian"
+---
+
+
+Apache Arrow is an extremely fast multi-language toolbox for fast data interchange and in-memory analytics.
+
+
+### Overview of Apache Arrow and the `arrow` library
+- Read and write Parquet Files, a common, space-efficient columnar file format.
+- Read and write CSV files. 
+- Read
+
+### In English please! 
+
+
+Columnar format is a fast way to store data in memory if you are planning on performing data analysis. 
+
+Arrow keeps data in a single format that can be accessed by multiple programming languages without converting it into a format that works natively in a given programming language. 
+
+Rather than using a tibble or a data.frame, data is stored in a file, `Arrow`
+## Schemas
+"here be dragons"
+
+`arrow::schema()`: Create a schema or extract one from an object.
+
+- [ ] When you read in a dataset in Arrow, it scans approximately 1MB of the data for a csv, or the first file when reading parquet files, and guesses the data types based. 
+
+## Lazy Evaluation
+
+While our `dplyr` verbs will feel familiar in Arrow, there is a subtle difference in how the code is evaluated. Normally, in `dplyr`, everything is run and a data frame (or tibble, depending on your input) is returned. 
+
+When you know that the result of your dplyr query will be larger than your available memory, that could be dangerous. That's why Arrow uses `lazy evaluation`. Your `dplyr` verbs aren't executed until you explicitly tell Arrow to do so. 
+
+You can tell it two ways: 
+
+`compute()`: bring the results of the Arrow query into memory as an Arrow Table
+`collect()`: bring the results of the Arrow query into memory as a `tibble`
+
+## 
+**Larger than Memory**: 
+Dataset: When the data won't fit into memory. 
+
+**Smaller than Memory**
+Millions of rows: Arrow
+Thousands of rows (or less): Tibble
+
+### Rule of thumb
+
+If you know the data is larger than your memory, start with a Dataset.
+
+Use `nrow()` liberally to understand how many rows would be returned by a query.
+If in the millions, stick with `Arrow`. If thousands or less, go with `tibble`.
+
