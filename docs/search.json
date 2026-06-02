@@ -1,0 +1,345 @@
+[
+  {
+    "objectID": "big-data-in-r-with-arrow.html",
+    "href": "big-data-in-r-with-arrow.html",
+    "title": "Big Data in R with Arrow",
+    "section": "",
+    "text": "Tabular data often hundreds to thousands of rows.\nThe maximum number of row in an Excel worksheet is 1,048,576.\nData can easily be &gt; 100 million rows."
+  },
+  {
+    "objectID": "big-data-in-r-with-arrow.html#what-makes-big-data-big",
+    "href": "big-data-in-r-with-arrow.html#what-makes-big-data-big",
+    "title": "Big Data in R with Arrow",
+    "section": "",
+    "text": "Tabular data often hundreds to thousands of rows.\nThe maximum number of row in an Excel worksheet is 1,048,576.\nData can easily be &gt; 100 million rows."
+  },
+  {
+    "objectID": "big-data-in-r-with-arrow.html#a-definition-sort-of",
+    "href": "big-data-in-r-with-arrow.html#a-definition-sort-of",
+    "title": "Big Data in R with Arrow",
+    "section": "A definition … sort of",
+    "text": "A definition … sort of\n\n\nData that is too large to fit into memory.\n\n\ne.g. a 40 GB .csv but only 16 GB RAM.\nA rule of thumb: your memory should be twice the size of your data.\n\n\nData that fits into memory but is prohibitively slow to analyze."
+  },
+  {
+    "objectID": "big-data-in-r-with-arrow.html#apache-arrow",
+    "href": "big-data-in-r-with-arrow.html#apache-arrow",
+    "title": "Big Data in R with Arrow",
+    "section": "Apache Arrow",
+    "text": "Apache Arrow\n\n\n\nApache Arrow is a universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics.\n\n\n\nColumnar is Fast!\nArrow keeps data in a single format that can be accessed by multiple programming languages and platforms without having to copy and convert the data.\nArrow works with multiple programming languages, including C++, C#, Go, Java, Julia, Python, and of course R.\n\n\n\n\n\n\n\n\n\n\n\n\nRow-Oriented\n\n\n\n\n\n\nColumnar"
+  },
+  {
+    "objectID": "big-data-in-r-with-arrow.html#row-in-memory",
+    "href": "big-data-in-r-with-arrow.html#row-in-memory",
+    "title": "Big Data in R with Arrow",
+    "section": "Row in Memory",
+    "text": "Row in Memory"
+  },
+  {
+    "objectID": "big-data-in-r-with-arrow.html#columnar-in-memory",
+    "href": "big-data-in-r-with-arrow.html#columnar-in-memory",
+    "title": "Big Data in R with Arrow",
+    "section": "Columnar in Memory",
+    "text": "Columnar in Memory\n\n\n\n\n\n\n\n\n\n\n\nConvert all cat counts to millions\n\n\n\ncats |&gt; \n  mutate(count_million = Count * 1000000)\n\n\n\n\n\n\n\n\n\n\nRow\n\nHeterogeneous Data Types\nBetter for transactional processing (Databases)\n\n\n\n\nColumn\n\nHomogeneous Data Types\nCompressible\nSingle Instruction Multiple Data (SIMD) Capable"
+  },
+  {
+    "objectID": "big-data-in-r-with-arrow.html#installing-arrow",
+    "href": "big-data-in-r-with-arrow.html#installing-arrow",
+    "title": "Big Data in R with Arrow",
+    "section": "Installing {arrow}",
+    "text": "Installing {arrow}\n\nInstall arrow by typing install.packages(\"arrow\")\nTo use dplyr pipelines both arrow and dplyr must be loaded\n\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union"
+  },
+  {
+    "objectID": "big-data-in-r-with-arrow.html#lets-explore-some-big-data",
+    "href": "big-data-in-r-with-arrow.html#lets-explore-some-big-data",
+    "title": "Big Data in R with Arrow",
+    "section": "Lets explore some big data",
+    "text": "Lets explore some big data\n\n\n\ndata.seattle.gov: Seattle Public Library checkouts by title for physical and electronic items.\nMonthly count of library checkouts since April 2005.\n46.9 million rows as of Feb 6th, 2025.\nseattle-library-checkouts.csv: 10.7 GB .csv file\n\n\n\n\n\n\nSeattle Central Public Library Image: https://www.spl.org/hours-and-locations/central-library/central-library-highlights/central-library-architecture"
+  },
+  {
+    "objectID": "big-data-in-r-with-arrow.html#dataset-contents",
+    "href": "big-data-in-r-with-arrow.html#dataset-contents",
+    "title": "Big Data in R with Arrow",
+    "section": "Dataset Contents",
+    "text": "Dataset Contents\n\n/* echo: false */\n\n.reveal table {\n  font-size: small;\n}\n\n\n\n\n\nAttaching package: 'kableExtra'\n\n\nThe following object is masked from 'package:dplyr':\n\n    group_rows\n\n\n\n\n\nusageclass\ncheckouttype\nmaterialtype\ncheckoutyear\ncheckoutmonth\ncheckouts\ntitle\ncreator\nsubjects\npublisher\npublicationyear\n\n\n\n\nDigital\nOverDrive\nEBOOK\n2018\n1\n22\nEnemy of the State\nVince Flynn\nFiction, Literature, Thriller\nSimon & Schuster, Inc.\n2017\n\n\nDigital\nHoopla\nTELEVISION\n2018\n1\n1\nNewspaper Mom / Cucumber in Rio / Donut Raffle\nNA\nChildren's\nDHX Media\nNA\n\n\nPhysical\nHorizon\nSOUNDDISC\n2018\n1\n1\nMono / the Mavericks.\nMavericks (Musical group)\nCountry music 2011 2020\nValory,\n[2015]\n\n\nDigital\nOverDrive\nEBOOK\n2018\n1\n2\nAnna Karenina\nLeo Tolstoy\nClassic Literature, Fiction, Literature\nPenguin Group (USA), Inc.\n2009\n\n\nDigital\nOverDrive\nEBOOK\n2018\n1\n1\nDragon: Vlad Series, Book 8\nSteven Brust\nFantasy, Fiction\nMacmillan Publishers\n2015\n\n\nDigital\nOverDrive\nEBOOK\n2018\n1\n1\nLittle Dorrit\nCharles Dickens\nClassic Literature, Fiction, Literature\nRandom House, Inc.\n2012\n\n\nDigital\nOverDrive\nEBOOK\n2018\n1\n2\nThe Inside Out Man\nFred Strydom\nFiction, Horror, Suspense, Thriller\nLightning Source Inc\n2017\n\n\nPhysical\nHorizon\nBOOK\n2018\n2\n1\nSpain : a history / edited by Raymond Carr.\nNA\nSpain History\nOxford University Press,\n2000."
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html",
+    "href": "presentation/big-data-in-r-with-arrow.html",
+    "title": "Big Data in R with Arrow",
+    "section": "",
+    "text": "Tabular data often hundreds to thousands of rows.\nThe maximum number of row in an Excel worksheet is 1,048,576.\nData can easily be &gt; 100 million rows."
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#what-makes-big-data-big",
+    "href": "presentation/big-data-in-r-with-arrow.html#what-makes-big-data-big",
+    "title": "Big Data in R with Arrow",
+    "section": "What makes big data BIG?",
+    "text": "What makes big data BIG?\n\nTabular data often hundreds to thousands of rows.\nThe maximum number of row in an Excel worksheet is 1,048,576.\nData can easily be &gt; 100 million rows."
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#a-definition-sort-of",
+    "href": "presentation/big-data-in-r-with-arrow.html#a-definition-sort-of",
+    "title": "Big Data in R with Arrow",
+    "section": "A definition … sort of",
+    "text": "A definition … sort of\n\nData that is too large to fit into memory.\n\n\ne.g. a 40 GB .csv but only 16 GB RAM.\nA rule of thumb: your memory should be twice the size of your data.\n\n\nData that fits into memory but is prohibitively slow to analyze."
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#apache-arrow",
+    "href": "presentation/big-data-in-r-with-arrow.html#apache-arrow",
+    "title": "Big Data in R with Arrow",
+    "section": "Apache Arrow",
+    "text": "Apache Arrow\n\n\n\nApache Arrow is a universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics.\n\n\nColumnar is Fast!\nArrow keeps data in a single format that can be accessed by multiple programming languages and platforms without having to copy and convert the data.\nArrow works with multiple programming languages, including C++, C#, Go, Java, Julia, Python, and of course R."
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#row-in-memory",
+    "href": "presentation/big-data-in-r-with-arrow.html#row-in-memory",
+    "title": "Big Data in R with Arrow",
+    "section": "Row in Memory",
+    "text": "Row in Memory"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#columnar-in-memory",
+    "href": "presentation/big-data-in-r-with-arrow.html#columnar-in-memory",
+    "title": "Big Data in R with Arrow",
+    "section": "Columnar in Memory",
+    "text": "Columnar in Memory"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#installing-arrow",
+    "href": "presentation/big-data-in-r-with-arrow.html#installing-arrow",
+    "title": "Big Data in R with Arrow",
+    "section": "Installing {arrow}",
+    "text": "Installing {arrow}\n\nInstall arrow by typing install.packages(\"arrow\")\nTo use dplyr pipelines both arrow and dplyr must be loaded\n\n\nlibrary(arrow)\nlibrary(dplyr)"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#lets-explore-some-big-data",
+    "href": "presentation/big-data-in-r-with-arrow.html#lets-explore-some-big-data",
+    "title": "Big Data in R with Arrow",
+    "section": "Lets explore some big data",
+    "text": "Lets explore some big data\n\n\n\ndata.seattle.gov: Seattle Public Library checkouts by title for physical and electronic items.\nMonthly count of library checkouts since April 2005.\n46.9 million rows as of Feb 6th, 2025.\nseattle-library-checkouts.csv: 10.7 GB .csv file\n\n\n\n\n\nSeattle Central Public Library Image: https://www.spl.org/hours-and-locations/central-library/central-library-highlights/central-library-architecture"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#dataset-contents",
+    "href": "presentation/big-data-in-r-with-arrow.html#dataset-contents",
+    "title": "Big Data in R with Arrow",
+    "section": "Dataset Contents",
+    "text": "Dataset Contents\n\n\n\n\n\nusageclass\ncheckouttype\nmaterialtype\ncheckoutyear\ncheckoutmonth\ncheckouts\ntitle\ncreator\nsubjects\npublisher\npublicationyear\n\n\n\n\nDigital\nOverDrive\nEBOOK\n2018\n1\n22\nEnemy of the State\nVince Flynn\nFiction, Literature, Thriller\nSimon & Schuster, Inc.\n2017\n\n\nDigital\nHoopla\nTELEVISION\n2018\n1\n1\nNewspaper Mom / Cucumber in Rio / Donut Raffle\nNA\nChildren's\nDHX Media\nNA\n\n\nPhysical\nHorizon\nSOUNDDISC\n2018\n1\n1\nMono / the Mavericks.\nMavericks (Musical group)\nCountry music 2011 2020\nValory,\n[2015]\n\n\nDigital\nOverDrive\nEBOOK\n2018\n1\n2\nAnna Karenina\nLeo Tolstoy\nClassic Literature, Fiction, Literature\nPenguin Group (USA), Inc.\n2009\n\n\nDigital\nOverDrive\nEBOOK\n2018\n1\n1\nDragon: Vlad Series, Book 8\nSteven Brust\nFantasy, Fiction\nMacmillan Publishers\n2015\n\n\nDigital\nOverDrive\nEBOOK\n2018\n1\n1\nLittle Dorrit\nCharles Dickens\nClassic Literature, Fiction, Literature\nRandom House, Inc.\n2012\n\n\nDigital\nOverDrive\nEBOOK\n2018\n1\n2\nThe Inside Out Man\nFred Strydom\nFiction, Horror, Suspense, Thriller\nLightning Source Inc\n2017\n\n\nPhysical\nHorizon\nBOOK\n2018\n2\n1\nSpain : a history / edited by Raymond Carr.\nNA\nSpain History\nOxford University Press,\n2000."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Big Data in R with Arrow",
+    "section": "",
+    "text": "This short presentation and accompanying reference guide introduces one approach to working with larger-than-memory data analysis in R using the Apache Arrow package arrow.\n\n\n\n\n\n\nNoteLearning Objectives\n\n\n\n\nBe able to explain why data analysis is faster on data organized in columns over rows."
+  },
+  {
+    "objectID": "index.html#learning-objectives",
+    "href": "index.html#learning-objectives",
+    "title": "Big Data in R with Arrow",
+    "section": "",
+    "text": "Note\n\n\n\n\nBe able to explain why data analysis is faster on data organized in columns over rows."
+  },
+  {
+    "objectID": "arrow-guide.html",
+    "href": "arrow-guide.html",
+    "title": "Big Data in R with Arrow",
+    "section": "",
+    "text": "Apache Arrow is an extremely fast multi-language toolbox for fast data interchange and in-memory analytics."
+  },
+  {
+    "objectID": "arrow-guide.html#lazy-evaluation",
+    "href": "arrow-guide.html#lazy-evaluation",
+    "title": "Big Data in R with Arrow",
+    "section": "Lazy Evaluation",
+    "text": "Lazy Evaluation\nWhile our dplyr verbs will feel familiar in Arrow, there is a subtle difference in how the code is evaluated. Normally, in dplyr, everything is run and a data frame (or tibble, depending on your input) is returned.\nWhen you know that the result of your dplyr query will be larger than your available memory, that could be dangerous. That’s why Arrow uses lazy evaluation. Your dplyr verbs aren’t executed until you explicitly tell Arrow to do so.\nYou can tell it two ways:\ncompute(): bring the results of the Arrow query into memory as an Arrow Table collect(): bring the results of the Arrow query into memory as a tibble"
+  },
+  {
+    "objectID": "arrow-guide.html#arrow-vs-dataset",
+    "href": "arrow-guide.html#arrow-vs-dataset",
+    "title": "Big Data in R with Arrow",
+    "section": "Arrow vs Dataset",
+    "text": "Arrow vs Dataset\nPicking the right tool for job.\nLarger than Memory: Dataset: When the data won’t fit into memory.\nSmaller than Memory Millions of rows: Arrow Thousands of rows (or less): Tibble\n\nRule of thumb\nIf you know the data is larger than your memory, start with a Dataset.\nUse nrow() liberally to understand how many rows would be returned by a query. If in the millions, stick with Arrow. If thousands or less, go with tibble."
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#even-bigger-data",
+    "href": "presentation/big-data-in-r-with-arrow.html#even-bigger-data",
+    "title": "Big Data in R with Arrow",
+    "section": "Even bigger data",
+    "text": "Even bigger data\n\n\n\nNYC Taxi and Limousine Commission (TLC) Trip Record Data\nYellow Taxi: TLC Trip Record Data\n\npickup and drop-off dates/times\npickup and drop-off locations\ntrip distances\nitemized fares\nrate types\npayment types\ndriver-reported passenger counts.\n\nCommon demonstration dataset for working with big data\n66 GB csv\n\n\n\n\nhttps://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#load-nyc-taxi-data",
+    "href": "presentation/big-data-in-r-with-arrow.html#load-nyc-taxi-data",
+    "title": "Big Data in R with Arrow",
+    "section": "Load NYC Taxi Data",
+    "text": "Load NYC Taxi Data\n\nlibrary(arrow)\nlibrary(tictoc)\ntic()\n\nnyc_taxi &lt;- open_dataset(\n  \"../data/nyc-taxi-csv/nyc_yellow_taxi.csv\",\n  format = \"csv\"\n)\n\ntoc()\n\n0.013 sec elapsed"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#dplyr-query",
+    "href": "presentation/big-data-in-r-with-arrow.html#dplyr-query",
+    "title": "Big Data in R with Arrow",
+    "section": "dplyr query",
+    "text": "dplyr query\n\ntic()\nshared_rides &lt;- nyc_taxi |&gt; \n  group_by(year) |&gt; \n  summarize(total_rides = n(), \n            shared_rides = sum(passenger_count &gt; 1,\n                               na.rm = TRUE)) |&gt; \n  mutate(percent_shared = (shared_rides / total_rides) * 100) |&gt; \n  collect()\ntoc()"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#some-big-data",
+    "href": "presentation/big-data-in-r-with-arrow.html#some-big-data",
+    "title": "Big Data in R with Arrow",
+    "section": "Some BIG data",
+    "text": "Some BIG data\n\n\nNYC Taxi and Limousine Commission (TLC) Trip Record Data\n\nYellow Taxi: TLC Trip Record Data from 2010 - April 2026\nCommon demonstration dataset for working with big data\n90 GB csv\n1,670,942,457 rows (that’s alot of 🚕 rides!)\n\n\n\n\nhttps://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#dplyr-query-1",
+    "href": "presentation/big-data-in-r-with-arrow.html#dplyr-query-1",
+    "title": "Big Data in R with Arrow",
+    "section": "dplyr query",
+    "text": "dplyr query\n\nCalculate the percent of rides that are shared by year\n\n\nlibrary(dplyr)\nnyc_taxi |&gt;                                                        \n  group_by(year) |&gt; \n  summarize(\n    total_rides = n(), \n    shared_rides = sum(passenger_count &gt; 1,\n                       na.rm = TRUE)\n    ) |&gt; \n  mutate(percent_shared = (shared_rides / total_rides) * 100)\n\nFileSystemDataset (query)\nyear: int64\ntotal_rides: int64\nshared_rides: uint64\npercent_shared: double (multiply_checked(divide(cast(shared_rides, {to_type=double, allow_int_overflow=false, allow_time_truncate=false, allow_time_overflow=false, allow_decimal_truncate=false, allow_float_truncate=false, allow_invalid_utf8=false}), cast(total_rides, {to_type=double, allow_int_overflow=false, allow_time_truncate=false, allow_time_overflow=false, allow_decimal_truncate=false, allow_float_truncate=false, allow_invalid_utf8=false})), 100))\n\nSee $.data for the source Arrow object"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#dplyr-query-2",
+    "href": "presentation/big-data-in-r-with-arrow.html#dplyr-query-2",
+    "title": "Big Data in R with Arrow",
+    "section": "dplyr query",
+    "text": "dplyr query\n\nlibrary(tictoc)\ntic()\nshared_rides &lt;- nyc_taxi |&gt; \n  group_by(year) |&gt; \n  summarize(total_rides = n(), \n            shared_rides = sum(passenger_count &gt; 1,\n                               na.rm = TRUE)) |&gt; \n  mutate(percent_shared = (shared_rides / total_rides) * 100) |&gt; \n  collect()\ntoc()\n\n\nRemember, this is over one billion rows of data\n\n\nOriginally 90 GB in size (now 30 GB), running on a laptop with only 24 GB of memory\n\n\n\n🤯"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#load-nyc-taxi-data-1",
+    "href": "presentation/big-data-in-r-with-arrow.html#load-nyc-taxi-data-1",
+    "title": "Big Data in R with Arrow",
+    "section": "Load NYC Taxi Data",
+    "text": "Load NYC Taxi Data\n\nlibrary(arrow)\nnyc_taxi &lt;- open_dataset(\n  \"../data/nyc-taxi-csv/nyc_yellow_taxi.csv\",\n  format = \"csv\"\n)\n\nnyc_taxi\n\nFileSystemDataset with 1 csv file\n20 columns\nvendor_id: string\npickup_datetime: timestamp[s]\ndropoff_datetime: timestamp[s]\npassenger_count: int64\ntrip_distance: double\npickup_longitude: double\npickup_latitude: double\nrate_code: int64\nstore_and_fwd_flag: int64\ndropoff_longitude: double\ndropoff_latitude: double\npayment_type: string\nfare_amount: double\nsurcharge: double\nmta_tax: double\ntip_amount: double\ntolls_amount: double\ntotal_amount: double\nyear: int64\nmonth: int64"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#dplyr-query-3",
+    "href": "presentation/big-data-in-r-with-arrow.html#dplyr-query-3",
+    "title": "Big Data in R with Arrow",
+    "section": "dplyr query",
+    "text": "dplyr query\n\nCalculate the percent of rides that are shared by year\n\n\n\nlibrary(tictoc)\ntic()\nnyc_taxi |&gt;                                                        \n  group_by(year) |&gt; \n  summarize(\n    total_rides = n(), \n    shared_rides = sum(passenger_count &gt; 1,\n                       na.rm = TRUE)\n    ) |&gt; \n  mutate(percent_shared = (shared_rides / total_rides) * 100) |&gt; \n  collect()\n\n# A tibble: 17 × 4\n    year total_rides shared_rides percent_shared\n   &lt;int&gt;       &lt;int&gt;        &lt;int&gt;          &lt;dbl&gt;\n 1  2010   169001162     53183971           31.5\n 2  2011   176887259     54377604           30.7\n 3  2012   171359007     50649689           29.6\n 4  2013   171816340     50735479           29.5\n 5  2014   165447579     48923062           29.6\n 6  2015   146039231     43069265           29.5\n 7  2016   131131805     38157353           29.1\n 8  2017   113500327     32299101           28.5\n 9  2018   102871387     28799187           28.0\n10  2019    84598444     23516403           27.8\n11  2020    24649092      5838354           23.7\n12  2021    30904308      7222209           23.4\n13  2022    39656098      9263032           23.4\n14  2023    38310226      8594406           22.4\n15  2024    41169720      8044431           19.5\n16  2025    48722602      7437246           15.3\n17  2026    14877870      1862383           12.5\n\ntoc()\n\n2.43 sec elapsed"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#apache-parquet",
+    "href": "presentation/big-data-in-r-with-arrow.html#apache-parquet",
+    "title": "Big Data in R with Arrow",
+    "section": "Apache Parquet",
+    "text": "Apache Parquet\n\n\n\n\n\nOn-disk archival big data storage\nBy accessing only the necessary columns, Parquet significantly speeds up data analysis queries\nEfficient compression techniques minimize the storage footprint of large datasets\nWidely used with modern big data processing frameworks\n\n\n\nParquet Illustration by VuTrinh: https://vutr.substack.com/p/the-overview-of-parquet-file-format"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#arrow-parquet-performance",
+    "href": "presentation/big-data-in-r-with-arrow.html#arrow-parquet-performance",
+    "title": "Big Data in R with Arrow",
+    "section": "Arrow Parquet performance",
+    "text": "Arrow Parquet performance"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#arrow-parquet-performance-1",
+    "href": "presentation/big-data-in-r-with-arrow.html#arrow-parquet-performance-1",
+    "title": "Big Data in R with Arrow",
+    "section": "Arrow Parquet performance",
+    "text": "Arrow Parquet performance"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#load-nyc-taxi-data-2",
+    "href": "presentation/big-data-in-r-with-arrow.html#load-nyc-taxi-data-2",
+    "title": "Big Data in R with Arrow",
+    "section": "Load NYC Taxi Data",
+    "text": "Load NYC Taxi Data\n\nnyc_taxi &lt;- open_dataset(\n  \"../data/nyc-taxi-parquet\",\n  format = \"parquet\"\n)\n\nnyc_taxi\n\nFileSystemDataset with 196 Parquet files\n20 columns\nvendor_id: string\npickup_datetime: string\ndropoff_datetime: string\npassenger_count: int32\ntrip_distance: double\npickup_longitude: double\npickup_latitude: double\nrate_code: string\nstore_and_fwd_flag: string\ndropoff_longitude: double\ndropoff_latitude: double\npayment_type: string\nfare_amount: double\nsurcharge: double\nmta_tax: double\ntip_amount: double\ntolls_amount: double\ntotal_amount: double\nyear: int32\nmonth: int32"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#speed-things-up-with-parquet",
+    "href": "presentation/big-data-in-r-with-arrow.html#speed-things-up-with-parquet",
+    "title": "Big Data in R with Arrow",
+    "section": "Speed things up with Parquet",
+    "text": "Speed things up with Parquet\n\n\n\n\n\nOn-disk archival big data storage\nBy accessing only the necessary columns, Parquet significantly speeds up data analysis queries\nEfficient compression techniques minimize the storage footprint of large datasets\nWidely used with modern big data processing frameworks\n\n\n\nParquet Illustration by VuTrinh: https://vutr.substack.com/p/the-overview-of-parquet-file-format"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#dplyr-query---a-little-faster-now",
+    "href": "presentation/big-data-in-r-with-arrow.html#dplyr-query---a-little-faster-now",
+    "title": "Big Data in R with Arrow",
+    "section": "dplyr query - a little faster now",
+    "text": "dplyr query - a little faster now\n\nlibrary(tictoc)\ntic()\nshared_rides &lt;- nyc_taxi |&gt; \n  group_by(year) |&gt; \n  summarize(total_rides = n(), \n            shared_rides = sum(passenger_count &gt; 1,\n                               na.rm = TRUE)) |&gt; \n  mutate(percent_shared = (shared_rides / total_rides) * 100) |&gt; \n  collect()\ntoc()\n\n2.496 sec elapsed\n\n\n\nRemember, this is over one billion rows of data\n\n\nOriginally 90 GB in size (now 30 GB), running on a laptop with only 24 GB of memory"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#arrow-dplyr-query",
+    "href": "presentation/big-data-in-r-with-arrow.html#arrow-dplyr-query",
+    "title": "Big Data in R with Arrow",
+    "section": "arrow + dplyr query",
+    "text": "arrow + dplyr query\nWe can use familiar dplyr verbs when working with an Arrow Dataset.\n\n\nCalculate the percent of rides that are shared by year\n\n\n\n\nlibrary(dplyr)\nnyc_taxi |&gt;                                                        \n  group_by(year) |&gt; \n  summarize(\n    total_rides = n(), \n    shared_rides = sum(passenger_count &gt; 1,\n                       na.rm = TRUE)\n    ) |&gt; \n  mutate(percent_shared = (shared_rides / total_rides) * 100)"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#arrow-dplyr-query-1",
+    "href": "presentation/big-data-in-r-with-arrow.html#arrow-dplyr-query-1",
+    "title": "Big Data in R with Arrow",
+    "section": "arrow + dplyr query",
+    "text": "arrow + dplyr query\n\nCalculate the percent of rides that are shared by year\n\n\nlibrary(dplyr)\nnyc_taxi |&gt;                                                        \n  group_by(year) |&gt; \n  summarize(\n    total_rides = n(), \n    shared_rides = sum(passenger_count &gt; 1,\n                       na.rm = TRUE)\n    ) |&gt; \n  mutate(percent_shared = (shared_rides / total_rides) * 100) |&gt; \n  class()\n\n[1] \"arrow_dplyr_query\""
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#bring-results-into-memory",
+    "href": "presentation/big-data-in-r-with-arrow.html#bring-results-into-memory",
+    "title": "Big Data in R with Arrow",
+    "section": "Bring results into memory",
+    "text": "Bring results into memory\n\n\ncollect() will bring the results of the Arrow query into memory as a tibble.\n\n\nnyc_taxi |&gt;                                                        \n  group_by(year) |&gt; \n  summarize(total_rides = n()) |&gt; \n  arrange(desc(year)) |&gt; \n  collect()"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#bring-results-into-memory-1",
+    "href": "presentation/big-data-in-r-with-arrow.html#bring-results-into-memory-1",
+    "title": "Big Data in R with Arrow",
+    "section": "Bring results into memory",
+    "text": "Bring results into memory\n\n\ncompute() will bring the results of the Arrow query into memory as an Arrow Table.\n\n\nnyc_taxi |&gt;                                                        \n  group_by(year) |&gt; \n  summarize(total_rides = n()) |&gt; \n  arrange(desc(year)) |&gt; \n  compute()"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#dplyr-query---a-little-faster-now-1",
+    "href": "presentation/big-data-in-r-with-arrow.html#dplyr-query---a-little-faster-now-1",
+    "title": "Big Data in R with Arrow",
+    "section": "dplyr query - a little faster now",
+    "text": "dplyr query - a little faster now\n\nlibrary(tictoc)\ntic()\nshared_rides &lt;- nyc_taxi |&gt; \n  group_by(year) |&gt; \n  summarize(total_rides = n(), \n            shared_rides = sum(passenger_count &gt; 1,\n                               na.rm = TRUE)) |&gt; \n  mutate(percent_shared = (shared_rides / total_rides) * 100) |&gt; \n  collect()\ntoc()\n\n2.509 sec elapsed\n\n\n\nRemember, this is over one billion rows of data\n\n\nOriginally 90 GB in size (now 30 GB), running on a laptop with only 24 GB of memory\n\n\n\n🤯"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#summary---that-was-alot",
+    "href": "presentation/big-data-in-r-with-arrow.html#summary---that-was-alot",
+    "title": "Big Data in R with Arrow",
+    "section": "Summary - that was alot",
+    "text": "Summary - that was alot\nThe arrow package is an implementation of Apache Arrow in R. . . .\nIt allows fast data analysis of larger-than-memory data in R using standard dplyr verbs.\n\nSome key takeaways:\n\nIf you have big data, load it into an Arrow Dataset with open_dataset().\nMost dplyr verbs work, just don’t forget to bring the result into memory.\n\nThousands of rows? Use collect() to a tibble\nMillions of rows? Use compute() to an Arrow Table\n\nIf you are working with big data, generally you should read/write in Parquet. ::: incremental"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#summary---that-was-a-lot",
+    "href": "presentation/big-data-in-r-with-arrow.html#summary---that-was-a-lot",
+    "title": "Big Data in R with Arrow",
+    "section": "Summary - that was a lot",
+    "text": "Summary - that was a lot\n\nThe arrow package is an implementation of Apache Arrow in R.\n\n\nIt allows fast data analysis of larger-than-memory data in R using standard dplyr verbs.\n\n\nSome key takeaways:\n\nIf you have big data, load it into an Arrow Dataset with open_dataset().\nMost dplyr verbs work, just don’t forget to bring the result into memory.\n\nThousands of rows? Use collect() to a tibble\nMillions of rows? Use compute() to an Arrow Table\n\nIf you are working with big data, generally you should read/write in Parquet."
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#section",
+    "href": "presentation/big-data-in-r-with-arrow.html#section",
+    "title": "Big Data in R with Arrow",
+    "section": "",
+    "text": "Now you’ve got a powerful Arrow in your quiver"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#now-youve-got-a-powerful-arrow-in-your-quiver",
+    "href": "presentation/big-data-in-r-with-arrow.html#now-youve-got-a-powerful-arrow-in-your-quiver",
+    "title": "Big Data in R with Arrow",
+    "section": "Now you’ve got a powerful Arrow in your quiver",
+    "text": "Now you’ve got a powerful Arrow in your quiver"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#now-youve-got-a-powerful-in-your-quiver",
+    "href": "presentation/big-data-in-r-with-arrow.html#now-youve-got-a-powerful-in-your-quiver",
+    "title": "Big Data in R with Arrow",
+    "section": "Now you’ve got a powerful in your quiver",
+    "text": "Now you’ve got a powerful in your quiver\nsome"
+  },
+  {
+    "objectID": "presentation/big-data-in-r-with-arrow.html#load-parquet-data",
+    "href": "presentation/big-data-in-r-with-arrow.html#load-parquet-data",
+    "title": "Big Data in R with Arrow",
+    "section": "Load Parquet data",
+    "text": "Load Parquet data\n\nnyc_taxi &lt;- open_dataset(\n  \"../data/nyc-taxi-parquet\",\n  format = \"parquet\"\n)\n\nnyc_taxi\n\nFileSystemDataset with 196 Parquet files\n20 columns\nvendor_id: string\npickup_datetime: string\ndropoff_datetime: string\npassenger_count: int32\ntrip_distance: double\npickup_longitude: double\npickup_latitude: double\nrate_code: string\nstore_and_fwd_flag: string\ndropoff_longitude: double\ndropoff_latitude: double\npayment_type: string\nfare_amount: double\nsurcharge: double\nmta_tax: double\ntip_amount: double\ntolls_amount: double\ntotal_amount: double\nyear: int32\nmonth: int32"
+  },
+  {
+    "objectID": "arrow-guide.html#section",
+    "href": "arrow-guide.html#section",
+    "title": "Big Data in R with Arrow",
+    "section": "",
+    "text": "Larger than Memory: Dataset: When the data won’t fit into memory.\nSmaller than Memory Millions of rows: Arrow Thousands of rows (or less): Tibble\n\nRule of thumb\nIf you know the data is larger than your memory, start with a Dataset.\nUse nrow() liberally to understand how many rows would be returned by a query. If in the millions, stick with Arrow. If thousands or less, go with tibble."
+  }
+]

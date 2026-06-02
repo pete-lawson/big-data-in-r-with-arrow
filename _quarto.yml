@@ -1,0 +1,21 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Big Data in R with Arrow"
+  navbar:
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "Arrow Guide"
+        href: arrow-guide.qmd
+      - text: "Big Data in R Presentation"
+        href: presentation/big-data-in-r-with-arrow.qmd
+
+format:
+  html:
+    theme:
+      - cosmo
+      - guide.scss
+    toc: true

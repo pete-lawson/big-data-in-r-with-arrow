@@ -1,0 +1,59 @@
+/*-- scss:defaults --*/
+
+// Colors
+$dark: #333333;
+$highlight: #900C3F;
+$off-white: #F7F7F7;
+$code: #900C3F;
+$link: #900C3F;
+
+
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+// Quarto webpage scss variables
+$font-family-sans-serif: 'Inter', sans-serif;
+$headings-font-family: 'Lora', serif;
+
+$link-color: $link;
+$code-color: $code;
+$code-bg: $off-white;
+$body-color: $dark;
+
+/*-- scss:rules --*/
+
+// Blockquotes
+blockquote {
+  border-left: 3px solid $dark;
+  padding-left: 0.5em;
+}
+
+// Tables
+table {
+  font-size: small;
+}
+
+// Utility: highlighted/bold text
+.focus {
+  color: $highlight;
+  font-weight: bold;
+}
+
+// Source caption
+.source {
+  color: $dark;
+  text-align: center;
+  font-size: 10px;
+  font-family: 'IBM Plex Serif', serif;
+}
+
+// Inline and block code font size
+code.sourceCode {
+  font-size: 1.3em;
+}
+
+// Code block background
+pre {
+  background-color: $off-white;
+}
